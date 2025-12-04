@@ -532,15 +532,63 @@ const handleAutoCut = () => {
         <input type="file" accept="video/*" multiple onChange={handleVideoUpload} />
         <ul style={{ maxHeight: 150, overflowY: "auto", padding: 0 }}>
   {videoAssets.map(asset => (
-    <li key={asset.id} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <span>{asset.name}</span>
+    <li
+      key={asset.id}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        padding: "4px 0",
+      }}
+    >
+      {/* Portada del video */}
+      <div
+        style={{
+          width: 64,
+          height: 64,
+          borderRadius: 8,
+          overflow: "hidden",
+          background: "#000",
+          flexShrink: 0,
+        }}
+      >
+        <video
+          src={asset.url}
+          muted
+          playsInline
+          preload="metadata"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+        />
+      </div>
 
-      {/* Botón manual */}
-      <button onClick={() => addVideoToTimeline(asset)}>+ Timeline</button>
+      {/* Texto y botones */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        {/* Nombre opcional, recortado para que no quede feo */}
+        <span
+          style={{
+            fontSize: "0.75rem",
+            maxWidth: 150,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            color: "#444",
+          }}
+          title={asset.name}
+        >
+          {asset.name}
+        </span>
 
-      {/* Botón AutoCut SOLO para ese video */}
-      <button onClick={() => handleAutoCutForAsset(asset)}>AutoCut</button>
+        <div style={{ display: "flex", gap: 4 }}>
+          <button onClick={() => addVideoToTimeline(asset)}>+ Timeline</button>
+          <button onClick={() => handleAutoCutForAsset(asset)}>AutoCut</button>
+        </div>
+      </div>
 
+      {/* Video oculto para leer duración, igual que antes */}
       {!asset.duration && (
         <video
           src={asset.url}
