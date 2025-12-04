@@ -137,6 +137,8 @@ const handleAutoCutForAsset = (asset: VideoAsset) => {
     { start: 9, end: 10 },
   ];
 
+
+
   const newSegments: VideoSegment[] = HIGHLIGHTS.map((h) => {
     const duration = h.end - h.start;
 
@@ -154,6 +156,45 @@ const handleAutoCutForAsset = (asset: VideoAsset) => {
   setVideoSegments((prev) => [...prev, ...newSegments]);
   setSelectedVideoSegmentId(newSegments[0].id);
 };
+
+// AutoCut para TODOS los vídeos subidos
+const handleAutoCutAll = () => {
+  if (videoAssets.length === 0) {
+    alert("Primero sube al menos un vídeo para poder usar AutoCut");
+    return;
+  }
+
+  // Simulamos la respuesta del backend: mismos HIGHLIGHTS para todos
+  const HIGHLIGHTS: { start: number; end: number }[] = [
+    { start: 2, end: 4 },
+    { start: 6, end: 7 },
+    { start: 9, end: 10 },
+  ];
+
+  const allNewSegments: VideoSegment[] = [];
+
+  videoAssets.forEach((asset) => {
+    const newSegmentsForAsset: VideoSegment[] = HIGHLIGHTS.map((h) => {
+      const duration = h.end - h.start;
+
+      return {
+        id: createId(),
+        assetId: asset.id,
+        sourceStart: h.start,
+        duration,
+        timelineStart: 0, // igual que cuando añades o autocutas uno solo
+      };
+    });
+
+    allNewSegments.push(...newSegmentsForAsset);
+  });
+
+  if (allNewSegments.length === 0) return;
+
+  setVideoSegments((prev) => [...prev, ...allNewSegments]);
+  setSelectedVideoSegmentId(allNewSegments[0].id);
+};
+
 
   const addAudioToTimeline = (asset: AudioAsset) => {
     const defaultDuration = asset.duration ?? 10;
@@ -636,14 +677,22 @@ const handleAutoCut = () => {
 >
   <strong>Proyecto sin nombre</strong>
 
-  <select
-    value={videoAspect}
-    onChange={(e) => setVideoAspect(e.target.value as any)}
-  >
-    <option value="vertical">9:16 (Vertical)</option>
-    <option value="horizontal">16:9 (Horizontal)</option>
-  </select>
+  {/* Controles arriba a la derecha */}
+  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+    <select
+      value={videoAspect}
+      onChange={(e) => setVideoAspect(e.target.value as any)}
+    >
+      <option value="vertical">9:16 (Vertical)</option>
+      <option value="horizontal">16:9 (Horizontal)</option>
+    </select>
+
+    <button onClick={handleAutoCutAll}>
+      AutoCut todos los vídeos
+    </button>
+  </div>
 </header>
+
 
 
 
